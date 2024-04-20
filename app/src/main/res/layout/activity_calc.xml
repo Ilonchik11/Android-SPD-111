@@ -109,6 +109,75 @@
                 style="@style/calc_func_btn"/>
         </TableRow>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/calc_btn_4"
+                android:text="@string/calc_btn_4"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_5"
+                android:text="@string/calc_btn_5"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_6"
+                android:text="@string/calc_btn_6"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_minus"
+                android:text="@string/calc_btn_minus"
+                style="@style/calc_func_btn"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/calc_btn_1"
+                android:text="@string/calc_btn_1"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_2"
+                android:text="@string/calc_btn_2"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_3"
+                android:text="@string/calc_btn_3"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_plus"
+                android:text="@string/calc_btn_plus"
+                style="@style/calc_func_btn"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/calc_btn_plus_minus"
+                android:text="@string/calc_btn_plus_minus"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_0"
+                android:text="@string/calc_btn_0"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_comma"
+                android:text="@string/calc_btn_comma"
+                style="@style/calc_digit_btn"/>
+            <Button
+                android:id="@+id/calc_btn_equals"
+                android:text="@string/calc_btn_equals"
+                style="@style/calc_equal_btn"/>
+        </TableRow>
+
     </TableLayout>
 
 

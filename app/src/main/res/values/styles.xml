@@ -14,4 +14,7 @@
     <style name="calc_digit_btn" parent="calc_btn">
         <item name="android:background">@drawable/calc_digit_btn</item>
     </style>
+    <style name="calc_equal_btn" parent="calc_btn">
+        <item name="android:background">@drawable/calc_equal_btn</item>
+    </style>
 </resources>
