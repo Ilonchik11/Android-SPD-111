@@ -4,8 +4,9 @@
     <!-- Main Activity-->
     <string name="main_tv_title">Android Basics</string>
     <string name="main_btn_calc">Calculator</string>
+    <string name="main_btn_game">Snake</string>
 
-    <!-- Calc Activity-->
+    <!-- region Calc Activity-->
     <string name="calc_tv_title">Calculator</string>
     <string name="calc_btn_percent">%</string>
     <string name="calc_btn_c">C</string>
@@ -31,4 +32,13 @@
     <string name="calc_btn_7">7</string>
     <string name="calc_btn_8">8</string>
     <string name="calc_btn_9">9</string>
+    <string name="calc_limit_exceeded">Limit exceeded</string>
+    <string name="calc_zero_division">Division by zero</string>
+    <!-- endregion -->
+
+    <!-- region GAME ACTIVITY -->
+
+
+
+    <!-- endregion -->
 </resources>
