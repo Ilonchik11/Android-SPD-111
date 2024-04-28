@@ -236,8 +236,6 @@ public class CalcActivity extends AppCompatActivity {
             tvResult.setText(str);
         } catch (ArithmeticException e) {
             Toast.makeText(this, R.string.calc_wrong_expression, Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, R.string.calc_wrong_expression, Toast.LENGTH_SHORT).show();
         }
     }
     private double evaluateExpression(String expression) {
