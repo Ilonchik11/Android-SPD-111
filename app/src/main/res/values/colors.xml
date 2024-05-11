@@ -16,4 +16,9 @@
     <color name="calc_equal_bg">#4CC1FE</color>
     <color name="calc_history_fg">#9B9B9B</color>
     <color name="calc_result_bg_land">#292929</color>
+
+    <!-- Game Activity-->
+    <color name="game_field">#FF88FF88</color>
+    <color name="game_snake">#FF118811</color>
+
 </resources>
