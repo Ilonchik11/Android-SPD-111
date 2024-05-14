@@ -32,8 +32,18 @@ public class GameActivity extends AppCompatActivity {
     private Direction moveDirection;
     private boolean isPlaying;
     private static final String food = new String(Character.toChars(0x1F34E));
+    private static final String bonus = new String(Character.toChars(0x1F34C));
     private Vector2 foodPosition;
+    private boolean isBonus = false;
+    private boolean isBonusEaten = false;
     private static final Random _random = new Random();
+    private int foodEaten;
+    private String foodEatenLabel;
+    private String currentSpeedLabel;
+    private static final int SPEED_REDUCTION = 100;
+    private int gameSpeed;
+    TextView foodEatenTextView;
+    TextView currentSpeedTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +91,10 @@ public class GameActivity extends AppCompatActivity {
 
         fieldColor = getResources().getColor(R.color.game_field, getTheme());
         snakeColor = getResources().getColor(R.color.game_snake, getTheme());
+        foodEatenTextView = findViewById(R.id.food_eaten_text_view);
+        foodEatenLabel = getResources().getString(R.string.snake_foodEaten);
+        currentSpeedTextView = findViewById(R.id.current_speed);
+        currentSpeedLabel = getResources().getString((R.string.snake_game_speed));
         initField();
         newGame();
     }
@@ -118,10 +132,30 @@ public class GameActivity extends AppCompatActivity {
             // видовження - не прибирати хвіст
             // перенести їжу, але, щоб не на змійку
             gameField[foodPosition.x][foodPosition.y].setText("");
+            foodEaten++;
+            updateFoodEaten();
             do{
                 foodPosition = Vector2.random();
             } while (isCellInSnake(foodPosition));
-            gameField[foodPosition.x][foodPosition.y].setText(food);
+
+            isBonus = (foodEaten % 3 == 0);
+            if(isBonus) {
+                gameField[foodPosition.x][foodPosition.y].setText(bonus);
+            }
+            else {
+                gameField[foodPosition.x][foodPosition.y].setText(food);
+            }
+            gameSpeed -= SPEED_REDUCTION;
+            if(gameSpeed < SPEED_REDUCTION) gameSpeed = SPEED_REDUCTION;
+            currentSpeedTextView.setText(currentSpeedLabel + gameSpeed);
+
+            if(foodEaten % 3 == 1 && foodEaten != 1) {
+                snake.remove(tail);
+                gameField[tail.x][tail.y].setBackgroundColor(fieldColor);
+                tail = snake.getLast();
+                snake.remove(tail);
+                gameField[tail.x][tail.y].setBackgroundColor(fieldColor);
+            }
         }
         else {
             snake.remove(tail);
@@ -130,8 +164,7 @@ public class GameActivity extends AppCompatActivity {
 
         snake.addFirst(newHead);
         gameField[newHead.x][newHead.y].setBackgroundColor(snakeColor);
-
-        handler.postDelayed(this::step, 700);
+        handler.postDelayed(this::step, gameSpeed);
     }
 
     private boolean isCellInSnake(Vector2 cell) {
@@ -174,7 +207,11 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    private void updateFoodEaten() {
+        foodEatenTextView.setText(foodEatenLabel + foodEaten);
+    }
     private void newGame() {
+        foodEaten = 0;
         for(Vector2 v : snake) {
             gameField[v.x][v.y].setBackgroundColor(fieldColor);
         }
@@ -196,6 +233,10 @@ public class GameActivity extends AppCompatActivity {
 
         moveDirection = Direction.top;
         isPlaying = true;
+        gameSpeed = 700;
+        foodEaten = 0;
+        currentSpeedTextView.setText(currentSpeedLabel + gameSpeed);
+        foodEatenTextView.setText(foodEatenLabel + foodEaten);
         step();
     }
 

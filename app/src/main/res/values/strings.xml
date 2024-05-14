@@ -39,8 +39,9 @@
     <!-- endregion -->
 
     <!-- region GAME ACTIVITY -->
-
-
+    <string name="snake_foodEaten">Food eaten: </string>
+    <string name="snake_game_name">GAME</string>
+    <string name="snake_game_speed">Current Speed: </string>
 
     <!-- endregion -->
 </resources>
