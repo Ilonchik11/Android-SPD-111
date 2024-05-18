@@ -5,6 +5,7 @@
     <string name="main_tv_title">Android Basics</string>
     <string name="main_btn_calc">Calculator</string>
     <string name="main_btn_game">Snake</string>
+    <string name="main_btn_chat">Network. Chat</string>
 
     <!-- region Calc Activity-->
     <string name="calc_tv_title">Calculator</string>
@@ -42,6 +43,10 @@
     <string name="snake_foodEaten">Food eaten: </string>
     <string name="snake_game_name">GAME</string>
     <string name="snake_game_speed">Current Speed: </string>
-
     <!-- endregion -->
+
+    <!-- region CHAT ACTIVITY -->
+    <string name="chat_scroller_description">Chat messages</string>
+    <!-- endregion -->
+
 </resources>
