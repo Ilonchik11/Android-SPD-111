@@ -1,7 +1,11 @@
 package step.learning.android_spd_111;
 
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -19,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -89,26 +94,55 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void displayChatMessages(boolean wasNewMessage) {
-        if(!wasNewMessage) return;
+        if (!wasNewMessage) return;
+
         Drawable myBackground = AppCompatResources.getDrawable(
                 getApplicationContext(),
                 R.drawable.chat_msg_my);
-        LinearLayout.LayoutParams msgParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        msgParams.setMargins(0, 10, 8, 10);
-        msgParams.gravity = Gravity.END;
-        runOnUiThread( () -> {
+        Drawable notMyBackground = AppCompatResources.getDrawable(
+                getApplicationContext(),
+                R.drawable.chat_msg_not_my);
+
+        runOnUiThread(() -> {
             LinearLayout container = findViewById(R.id.chat_container);
-            for(ChatMessage message : this.chatMessages) {
+            int index = 1;
+            for (ChatMessage message : this.chatMessages) {
                 TextView tv = new TextView(this);
-                tv.setText(message.getAuthor() + ": " + message.getText() + "\n");
-                tv.setBackground(myBackground);
-                tv.setGravity(Gravity.END);
-                tv.setPadding(15,5,15,5);
+
+                // Получаем автора и текст сообщения
+                String author = message.getAuthor();
+                String messageText = message.getText();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+                String messageDate = dateFormat.format(message.getMoment());
+
+                SpannableStringBuilder spannable = new SpannableStringBuilder();
+                spannable.append(author, new StyleSpan(Typeface.BOLD), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannable.append("\n");
+                spannable.append(messageText);
+                spannable.append("\n");
+                spannable.append(messageDate, new StyleSpan(Typeface.ITALIC), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                tv.setText(spannable);
+
+                LinearLayout.LayoutParams msgParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                msgParams.setMargins(0, 10, 8, 10);
+
+                if (index % 2 == 0) {
+                    tv.setBackground(myBackground);
+                    msgParams.gravity = Gravity.END; // Своё сообщение - прижато к правому краю
+                } else {
+                    tv.setBackground(notMyBackground);
+                    msgParams.gravity = Gravity.START; // Не своё сообщение - прижато к левому краю
+                }
+
+                tv.setPadding(15, 5, 15, 5);
                 tv.setLayoutParams(msgParams);
+
                 container.addView(tv);
+                index++;
             }
         });
     }

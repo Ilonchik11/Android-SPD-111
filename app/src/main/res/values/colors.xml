@@ -21,4 +21,8 @@
     <color name="game_field">#FF88FF88</color>
     <color name="game_snake">#FF118811</color>
 
+    <!-- Chat Activity-->
+    <color name="chat_msg_my">#B95FC8</color>
+    <color name="chat_msg_not_my">#2196F3</color>
+
 </resources>
