@@ -1,5 +1,7 @@
 package step.learning.android_spd_111.orm;
 
+import android.view.View;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,6 +14,17 @@ public class ChatMessage {
     private String author;
     private String text;
     private Date moment;
+    // не дані, ознака відображення
+    private View view;
+
+    public View getView() {
+        return view;
+    }
+
+    public void setView(View view) {
+        this.view = view;
+    }
+
     private static final SimpleDateFormat apiDateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss",
             Locale.UK

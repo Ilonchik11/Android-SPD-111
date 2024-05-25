@@ -1,16 +1,26 @@
 package step.learning.android_spd_111;
 
+import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,9 +32,14 @@ import androidx.core.view.WindowInsetsCompat;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -40,11 +55,18 @@ public class ChatActivity extends AppCompatActivity {
     // паралельні запити до кількох ресурсів не працюють, виконується лише один
     // це обмежує вибір виконавчого сервісу
     ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private EditText etNik;
+    private EditText etMessage;
+    private ScrollView chatScroller;
+    private LinearLayout container;
+    private MediaPlayer newMessageSound;
     private final List<ChatMessage> chatMessages = new ArrayList<>();
+    private final Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        // Заважає адаптуватись під екранну клавіатуру
+        // EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -52,10 +74,120 @@ public class ChatActivity extends AppCompatActivity {
             return insets;
         });
 
+        updateChat();
+        urlToImageView(
+                "https://cdn-icons-png.flaticon.com/512/5962/5962463.png",
+                findViewById(R.id.chat_iv_logo));
+
+        etNik = findViewById(R.id.chat_et_nik);
+        etMessage = findViewById(R.id.chat_et_message);
+        chatScroller = findViewById(R.id.chat_scroller);
+        container = findViewById(R.id.chat_container);
+        newMessageSound = MediaPlayer.create(this, R.raw.pickup);
+
+        findViewById(R.id.chat_btn_send).setOnClickListener(this::onSendClick);
+        container.setOnClickListener((v) -> {
+            hideSoftInput();
+        });
+    }
+
+    private void hideSoftInput() {
+        // клавіатура з'являється автоматично через фокус введення, прибрати її - прибрати фокус
+        // шукаємо елемент, що має фокус введення
+        View focusedView = getCurrentFocus();
+        if(focusedView != null) {
+            // Запитуємо систему щодо засобів управління клавіатурою
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            // прибираємо клавіатуру з сфокусованого елементу
+            manager.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
+            // прибираємо фокус з елемента
+            focusedView.clearFocus();
+        }
+    }
+
+    private void updateChat() {
+        if(executorService.isShutdown()) return;
+
         CompletableFuture
                 .supplyAsync(this::loadChat, executorService)
                 .thenApply(this::processChatResponse)
                 .thenAcceptAsync(this::displayChatMessages);
+
+        handler.postDelayed(this::updateChat, 3000);
+    }
+
+    private void onSendClick(View v) {
+        String author = etNik.getText().toString();
+        String message = etMessage.getText().toString();
+        if(author.isEmpty()) {
+            Toast.makeText(this, "Fill the 'Nickname'", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(message.isEmpty()) {
+            Toast.makeText(this, "Write the message", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setAuthor(author);
+        chatMessage.setText(message);
+        CompletableFuture.runAsync(() -> sendChatMessage(chatMessage), executorService);
+    }
+
+    private void sendChatMessage(ChatMessage chatMessage) {
+        /*
+        Необхідно сформувати POST-запит на URL чату та передати дані форми
+        з полями author та msg з відповідними значеннями з chatMessage
+        дані форми:
+        - заголовок Content-Type: application/x-www-form-urlencoded
+        - тіло у вигляді: author=TheAuthor&msg=The%20Message
+         */
+        try {
+            // 1. Готуємо підключення та налаштовуємо його
+            URL url = new URL(CHAT_URL);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setChunkedStreamingMode(0); // не ділити на чанки (фрагменти)
+            connection.setDoOutput(true); // запис у підключення -- передача тіла
+            connection.setDoInput(true); // читання -- одержання тіла відповіді від сервера
+            connection.setRequestMethod("POST");
+            // заголовки у connection задаються через setRequestProperty
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Connection", "close");
+
+            //  2. Запис тіла (DoOutput)
+            OutputStream connectionOutput = connection.getOutputStream();
+            String body = String.format( // author=TheAuthor&msg=The%20Message
+                    "author=%s&msg=%s",
+                    URLEncoder.encode(chatMessage.getAuthor(), StandardCharsets.UTF_8.name()),
+                    URLEncoder.encode(chatMessage.getText(), StandardCharsets.UTF_8.name())
+            );
+            connectionOutput.write(body.getBytes(StandardCharsets.UTF_8));
+            // 3. Надсилаємо - "виштовхуємо" буфер
+            connectionOutput.flush();
+            // 3.1 Звільняємо ресурс [якщо не вживати форму try(){} ]
+            connectionOutput.close();
+            // 4. Одержуємо відповідь
+            int statusCode = connection.getResponseCode();
+            // у разі успіху сервер передає статус 201 і не передає тіло
+            // якщо помилка, то статус інший та є тіло з описом помилки
+            if(statusCode == 201) {
+                // якщо потрібне тіло відповіді, то воно у потоці .getInputStream()
+                // запустити оновлення чату
+                updateChat();
+            }
+            else {
+                // хоча при помилці тіло таке ж, але воно віилучається .getErrorStream()
+                InputStream connectionInput = connection.getErrorStream();
+                body = readString(connectionInput);
+                connectionInput.close();
+                Log.e("sentChatMessage", body);
+            }
+            // 5. Закриваємо підключення
+            connection.disconnect();
+        }
+        catch(Exception ex) {
+            Log.e("sendChatMessage", ex.getMessage());
+        }
     }
 
     private String loadChat() {
@@ -75,6 +207,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private boolean processChatResponse(String response) {
         boolean wasNewMessage = false;
+        boolean isFirstProcess = this.chatMessages.isEmpty();
         try {
             ChatResponse chatResponse = ChatResponse.fromJsonString(response);
             for(ChatMessage message : chatResponse.getData()) {
@@ -84,6 +217,12 @@ public class ChatActivity extends AppCompatActivity {
                     this.chatMessages.add(message);
                     wasNewMessage = true;
                 }
+            }
+            if(isFirstProcess) {
+                this.chatMessages.sort(Comparator.comparing(ChatMessage::getMoment));
+            }
+            else if(wasNewMessage){
+                newMessageSound.start();
             }
         }
         catch(IllegalArgumentException ex) {
@@ -104,9 +243,11 @@ public class ChatActivity extends AppCompatActivity {
                 R.drawable.chat_msg_not_my);
 
         runOnUiThread(() -> {
-            LinearLayout container = findViewById(R.id.chat_container);
             int index = 1;
             for (ChatMessage message : this.chatMessages) {
+                if(message.getView() != null) { // вже показане
+                    continue;
+                }
                 TextView tv = new TextView(this);
 
                 // Получаем автора и текст сообщения
@@ -142,8 +283,18 @@ public class ChatActivity extends AppCompatActivity {
                 tv.setLayoutParams(msgParams);
 
                 container.addView(tv);
+                message.setView(tv);
                 index++;
             }
+            /*
+            chatScroller.fullScroll(View.FOCUS_DOWN);
+            Асинхронність Android призводить до того, що на момент подачі команди
+            не всі представлення, додані до контейнера, вже відображені.
+            Прокрутка дієтиме лише на поточне наповнення контейнера.
+             */
+            chatScroller.post( // передача дії, яка виконається після поточної черги
+                    () -> chatScroller.fullScroll(View.FOCUS_DOWN)
+            );
         });
     }
 
@@ -162,6 +313,17 @@ public class ChatActivity extends AppCompatActivity {
         executorService.shutdownNow();
         super.onDestroy();
     }
+
+    private void urlToImageView(String url, ImageView imageView) {
+        CompletableFuture.supplyAsync( () -> {
+                    try (java.io.InputStream is = new URL(url).openConnection().getInputStream()) {
+                        return BitmapFactory.decodeStream(is);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }, executorService )
+            .thenAccept( imageView::setImageBitmap );
+        }
 }
 
 /*
