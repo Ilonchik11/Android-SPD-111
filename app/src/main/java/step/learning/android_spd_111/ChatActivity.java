@@ -60,6 +60,8 @@ public class ChatActivity extends AppCompatActivity {
     private ScrollView chatScroller;
     private LinearLayout container;
     private MediaPlayer newMessageSound;
+    private boolean myMsgSoundCheck;
+    private boolean isSoundOn = true;
     private final List<ChatMessage> chatMessages = new ArrayList<>();
     private final Handler handler = new Handler();
     @Override
@@ -78,6 +80,9 @@ public class ChatActivity extends AppCompatActivity {
         urlToImageView(
                 "https://cdn-icons-png.flaticon.com/512/5962/5962463.png",
                 findViewById(R.id.chat_iv_logo));
+        urlToImageView(
+                "https://png.pngtree.com/png-vector/20190508/ourmid/pngtree-high-sound-vector-icon-png-image_1027718.jpg",
+                findViewById(R.id.chat_iv_sound));
 
         etNik = findViewById(R.id.chat_et_nik);
         etMessage = findViewById(R.id.chat_et_message);
@@ -86,9 +91,25 @@ public class ChatActivity extends AppCompatActivity {
         newMessageSound = MediaPlayer.create(this, R.raw.pickup);
 
         findViewById(R.id.chat_btn_send).setOnClickListener(this::onSendClick);
+        findViewById(R.id.chat_iv_sound).setOnClickListener(this::onSoundClick);
         container.setOnClickListener((v) -> {
             hideSoftInput();
         });
+    }
+
+    private void onSoundClick(View v) {
+        if(isSoundOn) {
+            urlToImageView(
+                    "https://cdn-icons-png.flaticon.com/512/5932/5932251.png",
+                    findViewById(R.id.chat_iv_sound));
+            isSoundOn = false;
+        }
+        else {
+            urlToImageView(
+                    "https://png.pngtree.com/png-vector/20190508/ourmid/pngtree-high-sound-vector-icon-png-image_1027718.jpg",
+                    findViewById(R.id.chat_iv_sound));
+            isSoundOn = true;
+        }
     }
 
     private void hideSoftInput() {
@@ -173,6 +194,8 @@ public class ChatActivity extends AppCompatActivity {
             if(statusCode == 201) {
                 // якщо потрібне тіло відповіді, то воно у потоці .getInputStream()
                 // запустити оновлення чату
+                etNik.setEnabled(false);
+                etMessage.setText("");
                 updateChat();
             }
             else {
@@ -221,7 +244,7 @@ public class ChatActivity extends AppCompatActivity {
             if(isFirstProcess) {
                 this.chatMessages.sort(Comparator.comparing(ChatMessage::getMoment));
             }
-            else if(wasNewMessage){
+            else if(wasNewMessage && !myMsgSoundCheck && isSoundOn){
                 newMessageSound.start();
             }
         }
@@ -243,7 +266,6 @@ public class ChatActivity extends AppCompatActivity {
                 R.drawable.chat_msg_not_my);
 
         runOnUiThread(() -> {
-            int index = 1;
             for (ChatMessage message : this.chatMessages) {
                 if(message.getView() != null) { // вже показане
                     continue;
@@ -271,7 +293,16 @@ public class ChatActivity extends AppCompatActivity {
                 );
                 msgParams.setMargins(0, 10, 8, 10);
 
-                if (index % 2 == 0) {
+                /*if (index % 2 == 0) {
+                    tv.setBackground(myBackground);
+                    msgParams.gravity = Gravity.END; // Своё сообщение - прижато к правому краю
+                } else {
+                    tv.setBackground(notMyBackground);
+                    msgParams.gravity = Gravity.START; // Не своё сообщение - прижато к левому краю
+                }*/
+
+                if (author.equals(etNik.getText().toString())) {
+                    myMsgSoundCheck = true;
                     tv.setBackground(myBackground);
                     msgParams.gravity = Gravity.END; // Своё сообщение - прижато к правому краю
                 } else {
@@ -284,7 +315,6 @@ public class ChatActivity extends AppCompatActivity {
 
                 container.addView(tv);
                 message.setView(tv);
-                index++;
             }
             /*
             chatScroller.fullScroll(View.FOCUS_DOWN);

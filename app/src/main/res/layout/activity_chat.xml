@@ -16,6 +16,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:id="@+id/chat_iv_sound"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/chat_tv_title"/>
+
         <TextView
             android:id="@+id/chat_tv_title"
             android:layout_width="wrap_content"
@@ -23,9 +32,8 @@
             android:text="Nickname:"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.067"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/chat_et_nik"
+            app:layout_constraintStart_toEndOf="@+id/chat_iv_sound"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
@@ -41,13 +49,13 @@
 
         <ImageView
             android:id="@+id/chat_iv_logo"
-            android:layout_width="50dp"
+            android:layout_width="40dp"
             android:layout_height="50dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@+id/chat_tv_title"
+            app:layout_constraintStart_toEndOf="@+id/chat_et_nik"
             app:layout_constraintTop_toTopOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
