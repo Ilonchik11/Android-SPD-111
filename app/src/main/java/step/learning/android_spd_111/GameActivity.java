@@ -5,6 +5,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +46,7 @@ public class GameActivity extends AppCompatActivity {
     private int gameSpeed;
     TextView foodEatenTextView;
     TextView currentSpeedTextView;
+    private Animation opacityAnimation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,7 @@ public class GameActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        opacityAnimation = AnimationUtils.loadAnimation(this, R.anim.opacity);
         // додаємо аналізатор (слухач) свайпів на всю активність (R.id.main)
         findViewById(R.id.main).setOnTouchListener(new OnSwipeListener(this) {
             @Override
@@ -141,9 +145,11 @@ public class GameActivity extends AppCompatActivity {
             isBonus = (foodEaten % 3 == 0);
             if(isBonus) {
                 gameField[foodPosition.x][foodPosition.y].setText(bonus);
+                gameField[foodPosition.x][foodPosition.y].setAnimation(opacityAnimation);
             }
             else {
                 gameField[foodPosition.x][foodPosition.y].setText(food);
+                gameField[foodPosition.x][foodPosition.y].setAnimation(opacityAnimation);
             }
             gameSpeed -= SPEED_REDUCTION;
             if(gameSpeed < SPEED_REDUCTION) gameSpeed = SPEED_REDUCTION;

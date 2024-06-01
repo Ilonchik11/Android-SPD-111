@@ -6,6 +6,7 @@
     <string name="main_btn_calc">Calculator</string>
     <string name="main_btn_game">Snake</string>
     <string name="main_btn_chat">Network. Chat</string>
+    <string name="main_btn_anim">Animations</string>
 
     <!-- region Calc Activity-->
     <string name="calc_tv_title">Calculator</string>
@@ -47,6 +48,15 @@
 
     <!-- region CHAT ACTIVITY -->
     <string name="chat_scroller_description">Chat messages</string>
+    <!-- endregion -->
+
+    <!-- region Anim ACTIVITY -->
+    <string name="anim_title">Animations</string>
+    <string name="anim_opacity_title">Opacity</string>
+    <string name="anim_size_title">Scale</string>
+    <string name="anim_arc_title">Rotation</string>
+    <string name="anim_move_title">Moving</string>
+    <string name="anim_combo_title">Combo</string>
     <!-- endregion -->
 
 </resources>
