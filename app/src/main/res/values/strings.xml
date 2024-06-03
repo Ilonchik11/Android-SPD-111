@@ -48,6 +48,9 @@
 
     <!-- region CHAT ACTIVITY -->
     <string name="chat_scroller_description">Chat messages</string>
+    <string name="chat_nickname">Nickname:</string>
+    <string name="chat_nickname_initial">Ivilik</string>
+    <string name="chat_message_text">Hello everybody!</string>
     <!-- endregion -->
 
     <!-- region Anim ACTIVITY -->
