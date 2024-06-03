@@ -80,6 +80,7 @@ public class CalcActivity extends AppCompatActivity {
         });
     }
     private void onCClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         String history = tvHistory.getText().toString();
         if(!result.equals("0")) {
@@ -92,6 +93,7 @@ public class CalcActivity extends AppCompatActivity {
         tvHistory.setText(history);
     }
     private void onCEClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         if (!result.isEmpty()) {
             result = result.substring(0, result.length() - 1);
@@ -105,6 +107,7 @@ public class CalcActivity extends AppCompatActivity {
         onCEClick(view);
     }
     private void onCommaClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         if (!result.endsWith("+") && !result.endsWith("*")
                 && !result.endsWith("-") && !result.endsWith("/")
@@ -114,6 +117,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(result);
     }
     private void onPlusClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         if(!result.equals("-") && !result.isEmpty()) {
             if (result.matches("^-?\\d.*")) {
@@ -128,6 +132,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(result);
     }
     private void onMinusClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         if(result.equals("0")) {
             result = "-";
@@ -142,6 +147,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(result);
     }
     private void onMultiplyClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         if(!result.equals("-") && !result.isEmpty()) {
             if (result.matches("^-?\\d.*")) {
@@ -156,6 +162,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(result);
     }
     private void onDivideClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         if(!result.equals("-") && !result.isEmpty()) {
             if (result.matches("^-?\\d.*")) {
@@ -170,6 +177,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(result);
     }
     private void onSqrtClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         double x = Double.parseDouble(result);
         if(x <= 0) {
@@ -184,6 +192,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(str);
     }
     private void onSquareClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         double x = Double.parseDouble(result);
         x *= x;
@@ -195,6 +204,7 @@ public class CalcActivity extends AppCompatActivity {
     }
     private void onInverseClick(View view) {
         String result = tvResult.getText().toString();
+        view.startAnimation(clickAnimation);
         double x = Double.parseDouble(result);
         if(x == 0) {
             Toast.makeText(this, R.string.calc_zero_division, Toast.LENGTH_SHORT).show();
@@ -208,6 +218,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(str);
     }
     private void onPercentClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         double x = Double.parseDouble(result);
         x /= 100;
@@ -218,6 +229,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(str);
     }
     private void onPlusMinusClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         if (!result.isEmpty() && !result.equals("0")) {
             if (result.charAt(0) == '-') {
@@ -229,6 +241,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(result);
     }
     private void onEqualsClick(View view) {
+        view.startAnimation(clickAnimation);
         String result = tvResult.getText().toString();
         try {
             double x = evaluateExpression(result);

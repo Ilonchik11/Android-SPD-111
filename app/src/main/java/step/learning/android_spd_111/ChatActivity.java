@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -64,6 +66,7 @@ public class ChatActivity extends AppCompatActivity {
     private boolean isSoundOn = true;
     private final List<ChatMessage> chatMessages = new ArrayList<>();
     private final Handler handler = new Handler();
+    private Animation sizeAnimation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +92,7 @@ public class ChatActivity extends AppCompatActivity {
         chatScroller = findViewById(R.id.chat_scroller);
         container = findViewById(R.id.chat_container);
         newMessageSound = MediaPlayer.create(this, R.raw.pickup);
+        sizeAnimation = AnimationUtils.loadAnimation(this, R.anim.size2);
 
         findViewById(R.id.chat_btn_send).setOnClickListener(this::onSendClick);
         findViewById(R.id.chat_iv_sound).setOnClickListener(this::onSoundClick);
@@ -138,6 +142,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void onSendClick(View v) {
+        v.startAnimation(sizeAnimation);
         String author = etNik.getText().toString();
         String message = etMessage.getText().toString();
         if(author.isEmpty()) {

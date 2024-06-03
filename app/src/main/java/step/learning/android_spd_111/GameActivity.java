@@ -144,12 +144,12 @@ public class GameActivity extends AppCompatActivity {
 
             isBonus = (foodEaten % 3 == 0);
             if(isBonus) {
-                gameField[foodPosition.x][foodPosition.y].setText(bonus);
                 gameField[foodPosition.x][foodPosition.y].setAnimation(opacityAnimation);
+                gameField[foodPosition.x][foodPosition.y].setText(bonus);
             }
             else {
-                gameField[foodPosition.x][foodPosition.y].setText(food);
                 gameField[foodPosition.x][foodPosition.y].setAnimation(opacityAnimation);
+                gameField[foodPosition.x][foodPosition.y].setText(food);
             }
             gameSpeed -= SPEED_REDUCTION;
             if(gameSpeed < SPEED_REDUCTION) gameSpeed = SPEED_REDUCTION;
